@@ -1,0 +1,35 @@
+import re
+
+def extract_coordinates_from_txt(file_path):
+    with open(file_path, 'r') as file:
+        content = file.read()
+        coordinates = re.findall(r'<coordinates>(.*?)</coordinates>', content, re.DOTALL)
+        coordinates = [coord.strip().split('\n') for coord in coordinates if coord.strip()]
+        # Omgekeerd formaat voor breedte- en lengtegraad
+        coordinates = [c.split(',')[::-1] for coords in coordinates for c in coords]
+        # Verwijder dubbele coördinaten met behulp van een set
+        unique_coordinates = set(map(tuple, coordinates))
+        return unique_coordinates
+
+# Rest van de code blijft hetzelfde
+
+
+def generate_google_maps_url(coordinates):
+    base_url = "https://www.google.com/maps/dir/"
+    for coord in coordinates:
+        if len(coord) == 2:  # Controleren of de coordinaat precies twee waarden heeft
+            lat, lon = coord
+            base_url += f"{lat},{lon}/"
+        else:
+            print(f"Onverwacht coordinaat formaat: {coord}")
+    return base_url
+
+# Plaats hieronder het path naar je txt bestand
+file_path = 
+coordinates = extract_coordinates_from_txt(file_path)
+if coordinates:
+    google_maps_url = generate_google_maps_url(coordinates)
+    print("Google Maps URL:")
+    print(google_maps_url)
+else:
+    print("Geen coördinaten gevonden in het opgegeven bestand.")
